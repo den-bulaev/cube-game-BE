@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { Score } from './score.entity';
 import { UpdateScoreDto } from './dto/update-score.dto';
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class ScoreService {
@@ -12,8 +13,8 @@ export class ScoreService {
     private scoresRepository: Repository<Score>,
   ) {}
 
-  async getUserScore(userId: string): Promise<Score> {
-    const found = await this.scoresRepository.findOneBy({ userId });
+  async getUserScore(userId: string, user: User): Promise<Score> {
+    const found = await this.scoresRepository.findOneBy({ userId, user });
 
     if (!found) {
       throw new NotFoundException('Score not found');
@@ -22,9 +23,13 @@ export class ScoreService {
     return found;
   }
 
-  async updateScore(userId: string, scoreData: UpdateScoreDto): Promise<Score> {
+  async updateScore(
+    userId: string,
+    scoreData: UpdateScoreDto,
+    user: User,
+  ): Promise<Score> {
     const { score } = scoreData;
-    const foundedScore = await this.getUserScore(userId);
+    const foundedScore = await this.getUserScore(userId, user);
 
     foundedScore.score = score;
     await this.scoresRepository.save(foundedScore);
