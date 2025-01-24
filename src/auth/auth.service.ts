@@ -13,6 +13,7 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { User } from './user.entity';
 import { IJwtPayload } from './jwt-payload.interface';
 import { Score } from 'src/score/score.entity';
+import { TopScore } from 'src/score/topScore.entity';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,9 @@ export class AuthService {
     @InjectRepository(Score)
     private scoreRepository: Repository<Score>,
     private jwtService: JwtService,
+
+    @InjectRepository(TopScore)
+    private topScoreRepository: Repository<TopScore>,
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
@@ -34,6 +38,7 @@ export class AuthService {
       username,
       password: hashedPassword,
     });
+    const isTopScoreExist = await this.topScoreRepository.exists();
 
     try {
       const savedUser = await this.usersRepository.save(user);
@@ -48,6 +53,15 @@ export class AuthService {
 
       savedUser.score = savedScore;
       await this.usersRepository.save(savedUser);
+
+      if (!isTopScoreExist) {
+        const defaultTopScore = this.topScoreRepository.create({
+          userId: savedUser.id,
+          value: savedScore.score,
+        });
+
+        await this.topScoreRepository.save(defaultTopScore);
+      }
     } catch (error) {
       if (error.code === '23505') {
         throw new ConflictException('Username already exists');

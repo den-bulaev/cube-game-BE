@@ -8,6 +8,7 @@ import { AuthController } from './auth.controller';
 import { User } from './user.entity';
 import { JwtStrategy } from './jwt.strategy';
 import { Score } from 'src/score/score.entity';
+import { TopScore } from 'src/score/topScore.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { Score } from 'src/score/score.entity';
       secret: 'topSecret',
       signOptions: { expiresIn: 3600 },
     }),
-    TypeOrmModule.forFeature([User, Score]),
+    TypeOrmModule.forFeature([User, Score, TopScore]),
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
