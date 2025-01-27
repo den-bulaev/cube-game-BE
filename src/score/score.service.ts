@@ -29,7 +29,7 @@ export class ScoreService {
 
     const { score } = found;
 
-    if (topScore && topScore.value < score) {
+    if (topScore.value < score) {
       const preparedTopScore: TopScore = {
         ...topScore,
         value: score,
