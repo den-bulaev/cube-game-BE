@@ -31,6 +31,7 @@ import { configValidationSchema } from './config.schema';
           configService.get('POSTGRES_PASSWORD'),
         );
         console.log('POSTGRES_DB', configService.get('POSTGRES_DB'));
+        console.log('PGHOST*****', process.env.PGHOST);
 
         return {
           ssl: isProduction,
@@ -39,7 +40,7 @@ import { configValidationSchema } from './config.schema';
           },
           type: 'postgres',
           host: configService.get('PGHOST'),
-          port: configService.get('PGPORT'),
+          port: Number(configService.get('PGPORT')),
           username: configService.get('POSTGRES_USER'),
           password: configService.get('POSTGRES_PASSWORD'),
           database: configService.get('POSTGRES_DB'),
