@@ -26,14 +26,18 @@ import { configValidationSchema } from './config.schema';
             ssl: isProduction ? { rejectUnauthorized: false } : null,
           },
           type: 'postgres',
+          ...(isProduction
+            ? { url: process.env.DATABASE_URL }
+            : {
+                host: configService.get('PGHOST'),
+                port: configService.get('PGPORT'),
+                username: configService.get('POSTGRES_USER'),
+                password: configService.get('POSTGRES_PASSWORD'),
+              }),
+
+          database: configService.get('POSTGRES_DB'),
           autoLoadEntities: true,
           synchronize: !isProduction,
-          host: configService.get('PGHOST'),
-          port: configService.get('PGPORT'),
-          username: configService.get('POSTGRES_USER'),
-          password: configService.get('POSTGRES_PASSWORD'),
-          database: configService.get('POSTGRES_DB'),
-          // url: process.env.DATABASE_URL,
         };
       },
     }),
