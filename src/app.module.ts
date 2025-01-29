@@ -39,6 +39,7 @@ console.log('JWT_SECRET', process.env.JWT_SECRET);
       database: process.env.POSTGRES_DB,
       autoLoadEntities: true,
       synchronize: !isProduction,
+      url: process.env.DATABASE_URL,
     }),
   ],
 })
