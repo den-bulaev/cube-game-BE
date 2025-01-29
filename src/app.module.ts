@@ -9,7 +9,10 @@ import { configValidationSchema } from './config.schema';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`.env.stage.${process.env.NODE_ENV}`],
+      envFilePath:
+        process.env.NODE_ENV === 'prod'
+          ? []
+          : [`.env.stage.${process.env.NODE_ENV}`],
       validationSchema: configValidationSchema,
     }),
     AuthModule,
