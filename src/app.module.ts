@@ -39,7 +39,7 @@ console.log('process.env.DATABASE_URL', process.env.DATABASE_URL);
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
       autoLoadEntities: true,
-      synchronize: !isProduction,
+      synchronize: true,
       url: process.env.DATABASE_URL,
     }),
   ],
