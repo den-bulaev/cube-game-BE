@@ -20,6 +20,11 @@ import { configValidationSchema } from './config.schema';
       useFactory: async (configService: ConfigService) => {
         const isProduction = configService.get('NODE_ENV') === 'prod';
         console.log('NODE_ENV', configService.get('NODE_ENV'));
+        console.log('PGHOST', configService.get('NODE_ENV'));
+        console.log('PGPORT', configService.get('NODE_ENV'));
+        console.log('POSTGRES_USER', configService.get('NODE_ENV'));
+        console.log('POSTGRES_PASSWORD', configService.get('NODE_ENV'));
+        console.log('POSTGRES_DB', configService.get('NODE_ENV'));
 
         return {
           ssl: isProduction,
