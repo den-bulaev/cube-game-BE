@@ -9,7 +9,7 @@ import { configValidationSchema } from './config.schema';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`.env.stage.${process.env.STAGE}`],
+      envFilePath: [`.env.stage.${process.env.NODE_ENV}`],
       validationSchema: configValidationSchema,
     }),
     AuthModule,
@@ -18,7 +18,7 @@ import { configValidationSchema } from './config.schema';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        const isProduction = configService.get('STAGE') === 'prod';
+        const isProduction = configService.get('NODE_ENV') === 'prod';
 
         return {
           ssl: isProduction,
