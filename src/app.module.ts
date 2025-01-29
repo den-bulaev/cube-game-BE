@@ -1,10 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
 import { ScoreModule } from './score/score.module';
 import { configValidationSchema } from './config.schema';
+
+const isProduction = process.env.NODE_ENV === 'prod';
+console.log('NODE_ENV', process.env.NODE_ENV);
+console.log('PGHOST', process.env.PGHOST);
+console.log('PGPORT', process.env.PGPORT);
+console.log('POSTGRES_USER', process.env.POSTGRES_USER);
+console.log('POSTGRES_PASSWORD', process.env.POSTGRES_PASSWORD);
+console.log('POSTGRES_DB', process.env.POSTGRES_DB);
 
 @Module({
   imports: [
@@ -17,37 +25,19 @@ import { configValidationSchema } from './config.schema';
     }),
     AuthModule,
     ScoreModule,
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        const isProduction = configService.get('NODE_ENV') === 'prod';
-        console.log('NODE_ENV', configService.get('NODE_ENV'));
-        console.log('PGHOST', configService.get('PGHOST'));
-        console.log('PGPORT', configService.get('PGPORT'));
-        console.log('POSTGRES_USER', configService.get('POSTGRES_USER'));
-        console.log(
-          'POSTGRES_PASSWORD',
-          configService.get('POSTGRES_PASSWORD'),
-        );
-        console.log('POSTGRES_DB', configService.get('POSTGRES_DB'));
-        console.log('PGHOST*****', process.env.PGHOST);
-
-        return {
-          ssl: isProduction,
-          extra: {
-            ssl: isProduction ? { rejectUnauthorized: false } : null,
-          },
-          type: 'postgres',
-          host: configService.get('PGHOST'),
-          port: Number(configService.get('PGPORT')),
-          username: configService.get('POSTGRES_USER'),
-          password: configService.get('POSTGRES_PASSWORD'),
-          database: configService.get('POSTGRES_DB'),
-          autoLoadEntities: true,
-          synchronize: !isProduction,
-        };
+    TypeOrmModule.forRoot({
+      ssl: isProduction,
+      extra: {
+        ssl: isProduction ? { rejectUnauthorized: false } : null,
       },
+      type: 'postgres',
+      host: process.env.PGHOST,
+      port: Number(process.env.PGPORT),
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
+      autoLoadEntities: true,
+      synchronize: !isProduction,
     }),
   ],
 })
