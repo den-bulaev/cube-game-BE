@@ -9,7 +9,7 @@ export class TopScore {
   @Column()
   userId: string;
 
-  @Column()
+  @Column({ nullable: true })
   value: number;
 
   @OneToMany(() => Score, (score) => score.topScore, {

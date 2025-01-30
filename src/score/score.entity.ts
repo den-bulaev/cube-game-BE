@@ -17,7 +17,7 @@ export class Score {
   @Column()
   userId: string;
 
-  @Column()
+  @Column({ nullable: true })
   score: number;
 
   @OneToOne(() => User, (user) => user.score, { onDelete: 'CASCADE' })

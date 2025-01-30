@@ -22,8 +22,6 @@ const isProduction = process.env.NODE_ENV === 'prod';
       useFactory: async (configService: ConfigService) => {
         const isProduction = configService.get('STAGE') === 'prod';
 
-        console.log('***PGHOST***', configService.get('PGHOST'));
-
         return {
           ssl: isProduction,
           extra: {

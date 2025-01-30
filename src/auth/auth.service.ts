@@ -46,7 +46,6 @@ export class AuthService {
       // Add user score
       const userScore = this.scoreRepository.create({
         userId: savedUser.id,
-        score: 0,
       });
 
       const savedScore = await this.scoreRepository.save(userScore);
@@ -57,7 +56,6 @@ export class AuthService {
       if (!isTopScoreExist) {
         const defaultTopScore = this.topScoreRepository.create({
           userId: savedUser.id,
-          value: savedScore.score,
         });
 
         await this.topScoreRepository.save(defaultTopScore);
@@ -73,15 +71,15 @@ export class AuthService {
 
   async signIn(
     authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ accessToken }> {
+  ): Promise<{ accessToken: string; userId: string }> {
     const { username, password } = authCredentialsDto;
     const user = await this.usersRepository.findOneBy({ username });
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload: IJwtPayload = { username };
-      const accessToken = await this.jwtService.sign(payload);
+      const accessToken = this.jwtService.sign(payload);
 
-      return { accessToken };
+      return { accessToken, userId: user.id };
     }
 
     throw new UnauthorizedException('Please check your login credentials');

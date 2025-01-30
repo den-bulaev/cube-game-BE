@@ -29,7 +29,7 @@ export class ScoreService {
 
     const { score } = found;
 
-    if (topScore.value < score) {
+    if (topScore.value > score && score !== null) {
       const preparedTopScore: TopScore = {
         ...topScore,
         value: score,
@@ -40,7 +40,10 @@ export class ScoreService {
 
       found.topScore = preparedTopScore;
     } else {
-      found.topScore = topScore;
+      found.topScore = {
+        ...topScore,
+        value: topScore.value === null ? score : null,
+      };
     }
 
     await this.scoresRepository.update(found.id, found);
@@ -59,7 +62,9 @@ export class ScoreService {
     delete foundedScore.topScore;
 
     foundedScore.score =
-      foundedScore.score < score ? score : foundedScore.score;
+      foundedScore.score < score && foundedScore.score !== null
+        ? foundedScore.score
+        : score;
 
     await this.scoresRepository.save(foundedScore);
 
