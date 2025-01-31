@@ -27,26 +27,7 @@ export class ScoreService {
       throw new NotFoundException('Score not found');
     }
 
-    const { score } = found;
-
-    if (topScore.value > score && score !== null) {
-      const preparedTopScore: TopScore = {
-        ...topScore,
-        value: score,
-        userId: user.id,
-      };
-
-      this.topScoreRepository.save(preparedTopScore);
-
-      found.topScore = preparedTopScore;
-    } else {
-      found.topScore = {
-        ...topScore,
-        value: topScore.value === null ? score : null,
-      };
-    }
-
-    await this.scoresRepository.update(found.id, found);
+    found.topScore = topScore;
 
     return found;
   }
@@ -58,15 +39,23 @@ export class ScoreService {
   ): Promise<Score> {
     const { score } = scoreData;
     const foundedScore = await this.getUserScore(userId, user);
+    const { value: topScoreValue, id: topScoreId } = foundedScore.topScore;
+    const preparedTopScore: TopScore = { ...foundedScore.topScore };
 
-    delete foundedScore.topScore;
+    if (score < topScoreValue || topScoreValue === null) {
+      preparedTopScore.value = score;
+      preparedTopScore.userId = user.id;
+      this.topScoreRepository.update(topScoreId, preparedTopScore);
+    }
 
     foundedScore.score =
       foundedScore.score < score && foundedScore.score !== null
         ? foundedScore.score
         : score;
 
-    await this.scoresRepository.save(foundedScore);
+    foundedScore.topScore = preparedTopScore;
+
+    await this.scoresRepository.update(foundedScore.id, foundedScore);
 
     return foundedScore;
   }

@@ -6,7 +6,7 @@ export class TopScore {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   userId: string;
 
   @Column({ nullable: true })

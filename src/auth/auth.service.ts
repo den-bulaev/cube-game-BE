@@ -54,9 +54,7 @@ export class AuthService {
       await this.usersRepository.save(savedUser);
 
       if (!isTopScoreExist) {
-        const defaultTopScore = this.topScoreRepository.create({
-          userId: savedUser.id,
-        });
+        const defaultTopScore = this.topScoreRepository.create({});
 
         await this.topScoreRepository.save(defaultTopScore);
       }
